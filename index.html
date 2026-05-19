@@ -57,8 +57,9 @@
 
 			#deathCount {
 				position: absolute;
-				top: 10px;
-				right: 10px;
+				top: 60px;
+				left: 47%;
+				transform: translateX(-50%);
 				padding: 8px 15px;
 				border-radius: 5px;
 				font-size: 20px;
@@ -371,7 +372,10 @@
 				class="wall"
 				style="left: 480px; top: 120px; width: 15px; height: 280px"
 			></div>
-			<div class="wall"></div>
+			<div
+				class="wall"
+				style="left: 560px; top: 10px; width: 15px; height: 280px"
+			></div>
 			<div
 				class="wall"
 				style="left: 600px; top: 40px; width: 12px; height: 290px"
@@ -388,7 +392,6 @@
 				class="wall"
 				style="left: 635px; top: 260px; width: 12px; height: 35px"
 			></div>
-			-->
 
 			<!-- Horizontal-->
 			<div
@@ -427,7 +430,6 @@
 				class="wall"
 				style="left: 635px; top: 255px; width: 45px; height: 12px"
 			></div>
-			-->
 
 			<!-- Border Walls -->
 			<div
@@ -464,7 +466,7 @@
 
 			<div id="goal">END</div>
 			<div id="timer">0:00</div>
-			<div id="deathCount">Deaths: 0</div>
+			<div id="deathCount">0</div>
 		</div>
 
 		<div id="jumpscare">
@@ -561,6 +563,9 @@
 			}
 
 			function respawnPlayer() {
+				deathCount++;
+
+				document.getElementById("deathCount").textContent = `${deathCount}`;
 				mouseX = 20;
 				mouseY = 20;
 
