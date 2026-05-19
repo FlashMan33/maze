@@ -840,6 +840,56 @@
 			setTimeout(() => {
 				startRockAttacks();
 			}, 15000);
+			const quizPopup = document.getElementById("quizPopup");
+			const quizQuestion = document.getElementById("quizQuestion");
+			const quizInput = document.getElementById("quizInput");
+			const quizBtn = document.getElementById("quizBtn");
+
+			let mathAnswer = 0;
+
+			function showMathQuiz() {
+				const a = Math.floor(Math.random() * 20) + 1;
+				const b = Math.floor(Math.random() * 20) + 1;
+
+				const ops = ["+", "-", "*"];
+				const op = ops[Math.floor(Math.random() * ops.length)];
+
+				if (op === "+") mathAnswer = a + b;
+				if (op === "-") mathAnswer = a - b;
+				if (op === "*") mathAnswer = a * b;
+
+				quizQuestion.textContent = `${a} ${op} ${b}`;
+
+				quizPopup.style.display = "flex";
+
+				quizInput.value = "";
+				quizInput.focus();
+			}
+
+			function checkQuizAnswer() {
+				const value = parseInt(quizInput.value);
+
+				if (value === mathAnswer) {
+					quizPopup.style.display = "none";
+				} else {
+					quizPopup.style.display = "none";
+					respawnPlayer();
+				}
+			}
+
+			quizBtn.addEventListener("click", checkQuizAnswer);
+
+			quizInput.addEventListener("keydown", (e) => {
+				if (e.key === "Enter") {
+					checkQuizAnswer();
+				}
+			});
+
+			setInterval(() => {
+				if (Math.random() < 0.4) {
+					showMathQuiz();
+				}
+			}, 15000);
 		</script>
 	</body>
 </html>
