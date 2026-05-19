@@ -1,0 +1,9 @@
+#scaryImg {
+	width: 120%;
+	height: 120%;
+	object-fit: cover;
+
+	position: absolute;
+	top: -10%;
+	left: -10%;
+}
