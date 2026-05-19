@@ -872,8 +872,10 @@
 				if (value === mathAnswer) {
 					quizPopup.style.display = "none";
 				} else {
-					quizPopup.style.display = "none";
 					respawnPlayer();
+
+					quizInput.value = "";
+					quizInput.focus();
 				}
 			}
 
