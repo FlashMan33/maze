@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
 	<head>
@@ -795,3 +796,803 @@
 		</script>
 	</body>
 </html>
+=======
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Maze Jumpscare Game</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: Arial, sans-serif;
+			}
+
+			body {
+				background: #111;
+				color: white;
+				overflow: hidden;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				flex-direction: column;
+			}
+
+			h1 {
+				margin-bottom: 10px;
+			}
+
+			p {
+				margin-bottom: 20px;
+				opacity: 0.8;
+			}
+
+			#game {
+				width: 700px;
+				height: 400px;
+				background: #222;
+				border: 4px solid white;
+				position: relative;
+				overflow: hidden;
+				cursor: crosshair;
+			}
+
+			#timer {
+				position: absolute;
+				top: 35px;
+				left: 285px;
+				padding: 8px 15px;
+				border-radius: 5px;
+				font-size: 20px;
+				font-weight: bold;
+				color: #0be2ff;
+				z-index: 10;
+				font-family: "Courier New", monospace;
+			}
+
+			#deathCount {
+				position: absolute;
+				top: 60px;
+				left: 47%;
+				transform: translateX(-50%);
+				padding: 8px 15px;
+				border-radius: 5px;
+				font-size: 20px;
+				font-weight: bold;
+				color: #ff4444;
+				z-index: 10;
+				font-family: "Courier New", monospace;
+			}
+
+			.wall {
+				position: absolute;
+				background: #dc143c;
+			}
+
+			.moving-trap {
+				position: absolute;
+				background: #dc143c;
+				animation: moveLeftRight 3s infinite;
+			}
+
+			@keyframes moveLeftRight {
+				0%,
+				100% {
+					left: 400px;
+				}
+				50% {
+					left: 470px;
+				}
+			}
+
+			#goal {
+				position: absolute;
+				width: 60px;
+				height: 60px;
+				background: lime;
+				right: 137px;
+				bottom: 0px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-weight: bold;
+				color: black;
+			}
+
+			#player {
+				position: absolute;
+				width: 15px;
+				height: 15px;
+				background: cyan;
+				border-radius: 50%;
+				left: 20px;
+				top: 20px;
+				pointer-events: none;
+				transition: transform 0.02s linear;
+			}
+
+			#jumpscare {
+				position: fixed;
+				inset: 0;
+				background: black;
+				display: none;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+				z-index: 999;
+				animation: flash 0.1s infinite;
+			}
+
+			#jumpscare h2 {
+				font-size: 90px;
+				color: #00ff00;
+				text-shadow: 0 0 20px #00ff00;
+			}
+
+			#jumpscare p {
+				font-size: 28px;
+				color: gold;
+			}
+
+			@keyframes flash {
+				0% {
+					background: black;
+				}
+				50% {
+					background: rgba(0, 255, 0, 0.3);
+				}
+				100% {
+					background: black;
+				}
+			}
+			#scaryImg {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				animation: zoomScare 0.4s forwards;
+			}
+
+			@keyframes zoomScare {
+				from {
+					transform: scale(1);
+				}
+
+				to {
+					transform: scale(1.4);
+				}
+			}
+
+			.laser {
+				position: absolute;
+				background: linear-gradient(
+					90deg,
+					#0be2ff,
+					#0be2ff,
+					rgba(11, 226, 255, 0.5)
+				);
+				box-shadow:
+					0 0 10px #0be2ff,
+					inset 0 0 10px #0be2ff;
+				height: 8px;
+				pointer-events: none;
+			}
+
+			@keyframes laserMove {
+				from {
+					left: 700px;
+				}
+				to {
+					left: -50px;
+				}
+			}
+
+			.rock {
+				position: absolute;
+				width: 30px;
+				height: 30px;
+				background: #8b7355;
+				border-radius: 5px;
+				box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+				top: -40px;
+				animation: fallDown 1.2s linear forwards;
+			}
+
+			.rock-indicator {
+				position: absolute;
+				width: 40px;
+				height: 4px;
+				background: #ffff00;
+				top: 0px;
+				animation: indicatorPulse 0.6s infinite;
+				pointer-events: none;
+				box-shadow:
+					0 0 15px #ffff00,
+					inset 0 0 10px #ffff00;
+				left: -5px !important;
+			}
+
+			@keyframes indicatorPulse {
+				0%,
+				100% {
+					opacity: 1;
+				}
+				50% {
+					opacity: 0.5;
+				}
+			}
+
+			@keyframes fallDown {
+				from {
+					top: -40px;
+				}
+				to {
+					top: 400px;
+				}
+			}
+
+			.ability {
+				position: absolute;
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-weight: bold;
+				cursor: pointer;
+				animation: spin 2s infinite linear;
+			}
+
+			.ability-shield {
+				background: radial-gradient(circle, #ffff00, #ffa500);
+				box-shadow: 0 0 15px #ffff00;
+			}
+
+			.ability-small {
+				background: radial-gradient(circle, #ff00ff, #ff69b4);
+				box-shadow: 0 0 15px #ff00ff;
+			}
+
+			@keyframes spin {
+				from {
+					transform: rotate(0deg);
+				}
+				to {
+					transform: rotate(360deg);
+				}
+			}
+
+			.shield-active {
+				box-shadow: 0 0 25px #ffff00 !important;
+				animation: pulse 0.5s infinite !important;
+			}
+
+			@keyframes pulse {
+				0%,
+				100% {
+					opacity: 1;
+				}
+				50% {
+					opacity: 0.7;
+				}
+			}
+
+			#game.warning {
+				box-shadow:
+					inset 0 0 30px rgba(11, 226, 255, 1),
+					0 0 40px rgba(11, 226, 255, 0.9);
+				animation: warningFlash 0.5s infinite;
+			}
+
+			@keyframes warningFlash {
+				0%,
+				100% {
+					box-shadow:
+						inset 0 0 30px rgba(11, 226, 255, 1),
+						0 0 40px rgba(11, 226, 255, 0.9);
+				}
+				50% {
+					box-shadow:
+						inset 0 0 50px rgba(11, 226, 255, 1),
+						0 0 60px rgba(11, 226, 255, 1);
+				}
+			}
+
+			.coin {
+				position: absolute;
+				width: 20px;
+				height: 20px;
+				background: gold;
+				border-radius: 50%;
+				border: 2px solid orange;
+				pointer-events: none;
+				animation: coinPulse 0.6s infinite;
+			}
+
+			@keyframes coinPulse {
+				0%,
+				100% {
+					transform: scale(1);
+					box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+				}
+				50% {
+					transform: scale(1.2);
+					box-shadow: 0 0 10px rgba(255, 215, 0, 1);
+				}
+			}
+
+			#coinCount {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				background: rgba(0, 0, 0, 0.7);
+				padding: 8px 15px;
+				border-radius: 5px;
+				font-size: 18px;
+				font-weight: bold;
+				color: gold;
+				z-index: 10;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Maze Challenge</h1>
+		<p>Use WASD or Arrow Keys to move the player to the green box.</p>
+
+		<div id="game">
+			<div id="player"></div>
+
+			<!-- Vertical -->
+			<div
+				class="wall"
+				style="left: 80px; top: 0; width: 15px; height: 320px"
+			></div>
+			<div
+				class="wall"
+				style="left: 160px; top: 80px; width: 15px; height: 320px"
+			></div>
+			<div
+				class="wall"
+				style="left: 240px; top: 0; width: 15px; height: 290px"
+			></div>
+			<div
+				class="wall"
+				style="left: 320px; top: 100px; width: 15px; height: 300px"
+			></div>
+			<div
+				class="wall"
+				style="left: 400px; top: 0; width: 15px; height: 280px"
+			></div>
+			<div
+				class="wall"
+				style="left: 480px; top: 120px; width: 15px; height: 280px"
+			></div>
+			<div
+				class="wall"
+				style="left: 560px; top: 10px; width: 15px; height: 280px"
+			></div>
+			<div
+				class="wall"
+				style="left: 600px; top: 40px; width: 12px; height: 290px"
+			></div>
+			<div
+				class="wall"
+				style="left: 635px; top: 35px; width: 12px; height: 80px"
+			></div>
+			<div
+				class="wall"
+				style="left: 635px; top: 140px; width: 12px; height: 90px"
+			></div>
+			<div
+				class="wall"
+				style="left: 635px; top: 260px; width: 12px; height: 35px"
+			></div>
+
+			<!-- Horizontal-->
+			<div
+				class="wall"
+				style="left: 50px; top: 80px; width: 80px; height: 15px"
+			></div>
+			<div
+				class="wall"
+				style="left: 160px; top: 320px; width: 120px; height: 15px"
+			></div>
+			<div
+				class="wall"
+				style="left: 240px; top: 120px; width: 55px; height: 15px"
+			></div>
+			<div
+				class="wall"
+				style="left: 360px; top: 280px; width: 60px; height: 15px"
+			></div>
+			<div
+				class="wall"
+				style="left: 400px; top: 80px; width: 120px; height: 15px"
+			></div>
+			<div
+				class="wall"
+				style="left: 480px; top: 320px; width: 130px; height: 12px"
+			></div>
+			<div
+				class="wall"
+				style="left: 610px; top: 320px; width: 40px; height: 12px"
+			></div>
+			<div
+				class="wall"
+				style="left: 610px; top: 140px; width: 35px; height: 12px"
+			></div>
+			<div
+				class="wall"
+				style="left: 635px; top: 255px; width: 45px; height: 12px"
+			></div>
+
+			<!-- Border Walls -->
+			<div
+				class="wall"
+				style="left: 0; top: 0; width: 700px; height: 15px"
+			></div>
+
+			<div
+				class="wall"
+				style="left: 0; bottom: 0; width: 700px; height: 15px"
+			></div>
+
+			<div
+				class="wall"
+				style="left: 0; top: 0; width: 15px; height: 400px"
+			></div>
+
+			<div
+				class="wall"
+				style="right: 0; top: 0; width: 15px; height: 400px"
+			></div>
+
+			<!-- Small traps -->
+			<div
+				class="wall"
+				style="left: 210px; top: 210px; width: 40px; height: 40px"
+			></div>
+
+			<!-- Moving trap (loops left-right) -->
+			<div
+				class="moving-trap wall"
+				style="left: 430px; top: 180px; width: 25px; height: 40px"
+			></div>
+
+			<div id="goal">END</div>
+			<div id="timer">0:00</div>
+			<div id="deathCount">0</div>
+		</div>
+
+		<div id="jumpscare">
+			<h2 id="victoryText">gampang jir!</h2>
+			<img src="WIN_20260519_12_23_15_Pro.jpg" alt="" />
+			<p id="victoryTime"></p>
+		</div>
+
+		<script>
+			const game = document.getElementById("game");
+			const player = document.getElementById("player");
+			const goal = document.getElementById("goal");
+			const walls = document.querySelectorAll(".wall");
+			const jumpscare = document.getElementById("jumpscare");
+
+			let mouseX = 20;
+			let mouseY = 20;
+
+			let keys = {};
+			let lasersActive = false;
+			let lasers = [];
+			let abilities = [];
+			let rocks = [];
+			let rocksActive = false;
+			let gameStartTime = Date.now();
+			let deathCount = 0;
+
+			let playerState = {
+				isSmall: false,
+				isShielded: false,
+				wallPassCount: 0,
+			};
+
+			document.addEventListener("keydown", (e) => {
+				keys[e.key.toLowerCase()] = true;
+			});
+
+			document.addEventListener("keyup", (e) => {
+				keys[e.key.toLowerCase()] = false;
+			});
+
+			function movePlayer() {
+				let speed = 4;
+
+				if (keys["w"] || keys["arrowup"]) mouseY -= speed;
+				if (keys["s"] || keys["arrowdown"]) mouseY += speed;
+				if (keys["a"] || keys["arrowleft"]) mouseX -= speed;
+				if (keys["d"] || keys["arrowright"]) mouseX += speed;
+
+				mouseX = Math.max(0, Math.min(685, mouseX));
+				mouseY = Math.max(0, Math.min(385, mouseY));
+
+				player.style.left = mouseX + "px";
+				player.style.top = mouseY + "px";
+
+				updateTimer();
+				checkCollision();
+				checkGoal();
+				checkLaserCollision();
+				checkAbilityCollision();
+				checkRockCollision();
+
+				requestAnimationFrame(movePlayer);
+			}
+
+			movePlayer();
+
+			function isColliding(a, b) {
+				return !(
+					a.right < b.left ||
+					a.left > b.right ||
+					a.bottom < b.top ||
+					a.top > b.bottom
+				);
+			}
+
+			function checkCollision() {
+				const playerRect = player.getBoundingClientRect();
+
+				walls.forEach((wall) => {
+					const wallRect = wall.getBoundingClientRect();
+
+					if (isColliding(playerRect, wallRect)) {
+						if (playerState.isShielded) {
+							return;
+						}
+						if (playerState.wallPassCount > 0) {
+							playerState.wallPassCount--;
+							return;
+						}
+						respawnPlayer();
+					}
+				});
+			}
+
+			function respawnPlayer() {
+				deathCount++;
+
+				document.getElementById("deathCount").textContent = `${deathCount}`;
+				mouseX = 20;
+				mouseY = 20;
+
+				player.style.left = mouseX + "px";
+				player.style.top = mouseY + "px";
+			}
+
+			function checkGoal() {
+				const playerRect = player.getBoundingClientRect();
+				const goalRect = goal.getBoundingClientRect();
+
+				if (isColliding(playerRect, goalRect)) {
+					setTimeout(() => {
+						triggerJumpscare();
+					}, 300);
+				}
+			}
+
+			function triggerJumpscare() {
+				const elapsedTime = Math.floor((Date.now() - gameStartTime) / 1000);
+				const minutes = Math.floor(elapsedTime / 60);
+				const seconds = elapsedTime % 60;
+
+				const timeText = `Waktu: ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+				document.getElementById("victoryTime").textContent = timeText;
+
+				jumpscare.style.display = "flex";
+				document.body.style.background = "#1a1a1a";
+
+				setTimeout(() => {
+					location.reload();
+				}, 3000);
+			}
+
+			function updateTimer() {
+				const elapsedTime = Math.floor((Date.now() - gameStartTime) / 1000);
+				const minutes = Math.floor(elapsedTime / 60);
+				const seconds = elapsedTime % 60;
+
+				document.getElementById("timer").textContent =
+					`${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+			}
+
+			function spawnLaser() {
+				const laser = document.createElement("div");
+				laser.className = "laser";
+				laser.style.top = mouseY + "px";
+				laser.style.width = "700px";
+				laser.style.animation = "laserMove 0.8s linear forwards";
+				game.appendChild(laser);
+				lasers.push(laser);
+
+				setTimeout(() => {
+					laser.remove();
+					lasers = lasers.filter((l) => l !== laser);
+				}, 800);
+			}
+
+			function checkLaserCollision() {
+				const playerRect = player.getBoundingClientRect();
+
+				lasers.forEach((laser) => {
+					const laserRect = laser.getBoundingClientRect();
+
+					if (isColliding(playerRect, laserRect)) {
+						if (!playerState.isShielded) {
+							respawnPlayer();
+						}
+					}
+				});
+			}
+
+			function startLaserAttacks() {
+				if (lasersActive) return;
+				lasersActive = true;
+
+				setInterval(() => {
+					game.classList.add("warning");
+					setTimeout(() => {
+						spawnLaser();
+						game.classList.remove("warning");
+					}, 1000);
+
+					const burstChance = Math.random();
+					if (burstChance < 0.1) {
+						setTimeout(() => {
+							game.classList.add("warning");
+							setTimeout(() => {
+								spawnLaser();
+								game.classList.remove("warning");
+							}, 1000);
+						}, 300);
+						setTimeout(() => {
+							game.classList.add("warning");
+							setTimeout(() => {
+								spawnLaser();
+								game.classList.remove("warning");
+							}, 1000);
+						}, 600);
+						setTimeout(() => {
+							game.classList.add("warning");
+							setTimeout(() => {
+								spawnLaser();
+								game.classList.remove("warning");
+							}, 1000);
+						}, 900);
+					}
+				}, 5000);
+			}
+
+			setTimeout(() => {
+				startLaserAttacks();
+			}, 10000);
+
+			function spawnAbility() {
+				const types = ["shield", "small"];
+				const type = types[Math.floor(Math.random() * types.length)];
+
+				const ability = document.createElement("div");
+				ability.className = `ability ability-${type}`;
+				ability.dataset.type = type;
+
+				const randomX = Math.random() * 650;
+				const randomY = Math.random() * 350;
+				ability.style.left = randomX + "px";
+				ability.style.top = randomY + "px";
+
+				game.appendChild(ability);
+				abilities.push({ element: ability, type: type });
+			}
+
+			function checkAbilityCollision() {
+				const playerRect = player.getBoundingClientRect();
+
+				abilities.forEach((ability, index) => {
+					const abilityRect = ability.element.getBoundingClientRect();
+
+					if (isColliding(playerRect, abilityRect)) {
+						activateAbility(ability.type);
+						ability.element.remove();
+						abilities.splice(index, 1);
+					}
+				});
+			}
+
+			function activateAbility(type) {
+				if (type === "shield") {
+					playerState.isShielded = true;
+					player.classList.add("shield-active");
+
+					setTimeout(() => {
+						playerState.isShielded = false;
+						player.classList.remove("shield-active");
+					}, 1500);
+				} else if (type === "small") {
+					playerState.isSmall = true;
+					player.style.width = "5px";
+					player.style.height = "5px";
+
+					setTimeout(() => {
+						playerState.isSmall = false;
+						player.style.width = "15px";
+						player.style.height = "15px";
+					}, 5000);
+				}
+			}
+
+			setInterval(() => {
+				if (Math.random() < 0.3) {
+					spawnAbility();
+				}
+			}, 10000);
+
+			function spawnRock(xPos) {
+				const indicator = document.createElement("div");
+				indicator.className = "rock-indicator";
+				indicator.style.left = xPos + "px";
+				game.appendChild(indicator);
+
+				setTimeout(() => {
+					indicator.remove();
+
+					const rock = document.createElement("div");
+					rock.className = "rock";
+					rock.style.left = xPos + "px";
+					game.appendChild(rock);
+					rocks.push(rock);
+
+					setTimeout(() => {
+						rock.remove();
+						rocks = rocks.filter((r) => r !== rock);
+					}, 1200);
+				}, 1000);
+			}
+
+			function checkRockCollision() {
+				const playerRect = player.getBoundingClientRect();
+
+				rocks.forEach((rock) => {
+					const rockRect = rock.getBoundingClientRect();
+
+					if (isColliding(playerRect, rockRect)) {
+						if (!playerState.isShielded) {
+							respawnPlayer();
+						}
+					}
+				});
+			}
+
+			function startRockAttacks() {
+				if (rocksActive) return;
+				rocksActive = true;
+
+				setInterval(() => {
+					const offset1 = (Math.random() - 0.5) * 150;
+					const offset2 = (Math.random() - 0.5) * 150;
+					const offset3 = (Math.random() - 0.5) * 150;
+
+					spawnRock(mouseX + offset1);
+					setTimeout(() => spawnRock(mouseX + offset2), 500);
+					setTimeout(() => spawnRock(mouseX + offset3), 1000);
+				}, 10000);
+			}
+
+			setTimeout(() => {
+				startRockAttacks();
+			}, 15000);
+		</script>
+	</body>
+</html>
+>>>>>>> 1c39ce2d435847ba0baf264e6f5a42f96f527db0
