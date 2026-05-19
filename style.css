@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #scaryImg {
 	width: 120%;
 	height: 120%;
@@ -8,14 +7,3 @@
 	top: -10%;
 	left: -10%;
 }
-=======
-#scaryImg {
-	width: 120%;
-	height: 120%;
-	object-fit: cover;
-
-	position: absolute;
-	top: -10%;
-	left: -10%;
-}
->>>>>>> 1c39ce2d435847ba0baf264e6f5a42f96f527db0
