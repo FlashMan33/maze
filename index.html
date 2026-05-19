@@ -792,6 +792,40 @@
 			setTimeout(() => {
 				startRockAttacks();
 			}, 15000);
+
+			function showMathQuestion() {
+				const a = Math.floor(Math.random() * 20) + 1;
+				const b = Math.floor(Math.random() * 20) + 1;
+
+				const operators = ["+", "-", "*"];
+				const op = operators[Math.floor(Math.random() * operators.length)];
+
+				let correctAnswer;
+
+				if (op === "+") correctAnswer = a + b;
+				if (op === "-") correctAnswer = a - b;
+				if (op === "*") correctAnswer = a * b;
+
+				const userAnswer = prompt(`Jawab cepat!\n\n${a} ${op} ${b} = ?`);
+
+				if (userAnswer === null) {
+					respawnPlayer();
+					return;
+				}
+
+				if (parseInt(userAnswer) !== correctAnswer) {
+					alert("Salah! Respawn!");
+					respawnPlayer();
+				} else {
+					alert("Benar!");
+				}
+			}
+
+			setInterval(() => {
+				if (Math.random() < 1) {
+					showMathQuestion();
+				}
+			}, 15000);
 		</script>
 	</body>
 </html>
